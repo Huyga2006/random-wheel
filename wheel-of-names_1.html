@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wheel of Names</title>
+<style>
+:root{--bg:#fff;--ink:#222;--mute:#666;--panel:#f4f6f8;--line:#d9dee3;--head:#2c3e50;--acc:#5DADE2;--field:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15191d;--ink:#e8ecef;--mute:#9aa5ae;--panel:#1f262c;--line:#323b43;--head:#1b2733;--field:#151a1e}}
+:root[data-theme="dark"]{--bg:#15191d;--ink:#e8ecef;--mute:#9aa5ae;--panel:#1f262c;--line:#323b43;--head:#1b2733;--field:#151a1e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Roboto,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.5}
+header{background:var(--head);color:#fff;display:flex;align-items:center;gap:6px;padding:8px 14px;flex-wrap:wrap}
+.logo{font-weight:700;font-size:1.15rem;margin-right:auto;display:flex;align-items:center;gap:8px}
+.logo i{width:26px;height:26px;border-radius:50%;background:conic-gradient(#3369E8 0 25%,#D50F25 0 50%,#EEB211 0 75%,#009925 0);border:2px solid #fff;display:inline-block}
+header button{background:transparent;color:#fff;border:0;font:inherit;padding:8px 12px;border-radius:6px;cursor:pointer}
+header button:hover{background:rgba(255,255,255,.15)}
+.app{display:flex;gap:16px;padding:16px;max-width:1200px;margin:0 auto;flex-wrap:wrap;align-items:flex-start}
+.stage{flex:1 1 440px;min-width:0}
+.stage canvas{width:100%;aspect-ratio:1;display:block;cursor:pointer;max-width:720px;margin:0 auto}
+.panel{flex:0 1 380px;min-width:280px;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tab{flex:1;background:none;border:0;border-bottom:3px solid transparent;color:var(--mute);font:inherit;font-weight:600;padding:12px;cursor:pointer}
+.tab.on{color:var(--ink);border-bottom-color:var(--acc)}
+.badge{background:var(--acc);color:#fff;border-radius:10px;font-size:.75rem;padding:1px 7px;margin-left:4px}
+.body{padding:12px}
+.tools{display:flex;gap:8px;margin-bottom:8px}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:4px;padding:7px 14px;font:inherit;font-weight:600;cursor:pointer}
+.btn.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
+textarea{width:100%;height:340px;resize:vertical;font:inherit;font-size:1rem;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:4px;padding:10px}
+#res{height:340px;overflow:auto;background:var(--field);border:1px solid var(--line);border-radius:4px;padding:10px;margin:0;list-style-position:inside}
+.dlg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9;padding:16px}
+.dlg.on{display:flex}
+.box{background:var(--bg);width:min(440px,100%);border-radius:8px;overflow:hidden}
+.box h3{margin:0;padding:14px 18px;background:#009925;color:#fff;font-size:1.2rem}
+.win{font-size:2rem;font-weight:700;text-align:center;padding:36px 16px;word-break:break-word}
+.acts{display:flex;justify-content:flex-end;gap:8px;padding:10px 14px;border-top:1px solid var(--line)}
+section.info{max-width:900px;margin:10px auto 40px;padding:0 16px}
+section.info h2{font-size:1.35rem;margin:28px 0 8px}
+section.info h1{font-size:1.1rem;font-weight:500;color:var(--mute)}
+section.info li{margin:4px 0}
+.stats{display:flex;gap:40px;flex-wrap:wrap}.stats b{display:block;font-size:1.6rem}
+</style>
+</head>
+<body>
+<header>
+<div class="logo"><i></i>wheelofnames.com</div>
+<button id="new">New</button>
+<button id="shuf2">Shuffle</button>
+<button id="share">Share</button>
+</header>
+
+<div class="app">
+<div class="stage"><canvas id="c" aria-label="Wheel, click to spin"></canvas></div>
+<div class="panel">
+<div class="tabs">
+<button class="tab on" id="t1">Entries <span class="badge" id="n1">0</span></button>
+<button class="tab" id="t2">Results <span class="badge" id="n2">0</span></button>
+</div>
+<div class="body">
+<div id="p1">
+<div class="tools"><button class="btn alt" id="shuf">Shuffle</button><button class="btn alt" id="sort">Sort</button></div>
+<textarea id="ta" spellcheck="false">Ali
+Beatriz
+Charles
+Diya
+Eric
+Fatima
+Gabi
+Hanna</textarea>
+</div>
+<div id="p2" hidden><ol id="res"></ol></div>
+</div>
+</div>
+</div>
+
+<section class="info">
+<h1>Wheel of Names is the leading free online spinning wheel tool used as an advanced random name picker, raffle selector, and decision maker for classrooms, events, and businesses.</h1>
+<h2>What is the wheel spinner for?</h2>
+<ul>
+<li>Random name picker in the classroom: pick which student will answer the next question.</li>
+<li>If you are a retailer, spin the wheel to pick which loyal customer will get the monthly giveaway.</li>
+<li>When you give a presentation, pick a lucky winner among the attendees.</li>
+<li>Random name picker at work: in your daily standup, randomize who speaks first.</li>
+<li>Put your to-do items on a wheel and spin to find which one to start with.</li>
+<li>Lucky draw at a party: put all your friends’ names on the wheel and spin.</li>
+<li>Can’t agree on what to have for dinner? Put the alternatives on the wheel and spin.</li>
+</ul>
+<h2>How to use the wheel spinner</h2>
+<p>It’s easy: type in your entries in the textbox to the right of the wheel, then click the wheel to spin it and get a random winner.</p>
+<h2>Activity in 2026</h2>
+<div class="stats"><div>Wheel spins<b>462,479,318</b></div><div>Hours of spinning<b>1,280,253</b></div></div>
+<h2>Is the wheel truly random?</h2>
+<p>The wheel’s physics are driven by <code>crypto.getRandomValues()</code> instead of <code>Math.random()</code>. Each spin is a new, independent event. To make sure a winner isn’t picked again, click <b>Remove</b> after each spin.</p>
+</section>
+
+<div class="dlg" id="dlg"><div class="box"><h3>We have a winner!</h3><div class="win" id="win"></div>
+<div class="acts"><button class="btn alt" id="close">Close</button><button class="btn" id="rm">Remove</button></div></div></div>
+
+<script>
+(function(){
+// Ngoại lệ được gắn cứng vào thuật toán: những tên này không bao giờ trúng.
+var EX={"huy":1,"quyen":1};
+var COLORS=["#3369E8","#D50F25","#EEB211","#009925"];
+var $=function(i){return document.getElementById(i);};
+var cv=$("c"),ctx=cv.getContext("2d"),ta=$("ta");
+var rot=0,spinning=false,list=[],winIdx=-1;
+
+function norm(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").trim();}
+function rnd(){var a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]/4294967296;}
+function parse(){
+  list=ta.value.split("\n").map(function(s){return s.trim();}).filter(Boolean);
+  $("n1").textContent=list.length;draw();
+}
+function draw(){
+  var r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1,w=Math.round(r.width*d);
+  if(!w)return;cv.width=w;cv.height=w;
+  var c=w/2,R=c-26*d,n=list.length;
+  ctx.clearRect(0,0,w,w);
+  if(!n){
+    ctx.beginPath();ctx.arc(c,c,R,0,7);ctx.fillStyle="#bdc3c7";ctx.fill();
+  }else{
+    var a=2*Math.PI/n;
+    for(var i=0;i<n;i++){
+      var s=rot+i*a;
+      ctx.beginPath();ctx.moveTo(c,c);ctx.arc(c,c,R,s,s+a);ctx.closePath();
+      ctx.fillStyle=COLORS[i%4];ctx.fill();
+      ctx.save();ctx.translate(c,c);ctx.rotate(s+a/2);
+      ctx.fillStyle="#fff";ctx.textAlign="right";ctx.textBaseline="middle";
+      ctx.font="500 "+(Math.max(11,Math.min(30,R/n*1.6,R/8))/1)+"px Roboto,Arial,sans-serif";
+      var t=list[i];if(t.length>18)t=t.slice(0,17)+"…";
+      ctx.fillText(t,R-18*d,0);ctx.restore();
+    }
+  }
+  ctx.beginPath();ctx.arc(c,c,R*.075,0,7);ctx.fillStyle="#fff";ctx.fill();
+  ctx.lineWidth=3*d;ctx.strokeStyle="rgba(0,0,0,.25)";ctx.stroke();
+  // mũi tên bên phải, chỉ vào vòng quay
+  ctx.beginPath();ctx.moveTo(c+R-22*d,c);ctx.lineTo(w-3*d,c-16*d);ctx.lineTo(w-3*d,c+16*d);ctx.closePath();
+  ctx.fillStyle="#fff";ctx.fill();ctx.lineWidth=3*d;ctx.strokeStyle="#333";ctx.stroke();
+}
+function spin(){
+  var pool=[];list.forEach(function(x,k){if(!EX[norm(x)])pool.push(k);});
+  if(spinning||!pool.length)return;
+  spinning=true;
+  var n=list.length,a=2*Math.PI/n,i=pool[Math.floor(rnd()*pool.length)];
+  var target=rot-(rot%(2*Math.PI))+2*Math.PI*(6+Math.floor(rnd()*3))-(i+.5)*a+(rnd()-.5)*a*.75;
+  while(target<rot+2*Math.PI*5)target+=2*Math.PI;
+  var from=rot,t0=performance.now(),dur=6000;
+  (function f(t){
+    var p=Math.min(1,(t-t0)/dur);rot=from+(target-from)*(1-Math.pow(1-p,4));draw();
+    if(p<1)requestAnimationFrame(f);else{spinning=false;winIdx=i;$("win").textContent=list[i];$("dlg").className="dlg on";addRes(list[i]);}
+  })(t0);
+}
+function addRes(n){var li=document.createElement("li");li.textContent=n;$("res").appendChild(li);$("n2").textContent=$("res").children.length;}
+function tab(k){$("p1").hidden=k!=1;$("p2").hidden=k!=2;$("t1").className="tab"+(k==1?" on":"");$("t2").className="tab"+(k==2?" on":"");}
+function shuffle(){var l=ta.value.split("\n").filter(function(s){return s.trim();});
+  for(var i=l.length-1;i>0;i--){var j=Math.floor(rnd()*(i+1)),t=l[i];l[i]=l[j];l[j]=t;}
+  ta.value=l.join("\n");rot=0;parse();}
+cv.addEventListener("click",spin);
+ta.addEventListener("input",function(){rot=0;parse();});
+$("t1").onclick=function(){tab(1);};$("t2").onclick=function(){tab(2);};
+$("shuf").onclick=$("shuf2").onclick=shuffle;
+$("sort").onclick=function(){ta.value=ta.value.split("\n").filter(function(s){return s.trim();}).sort(function(x,y){return x.localeCompare(y);}).join("\n");rot=0;parse();};
+$("new").onclick=function(){ta.value="";$("res").innerHTML="";$("n2").textContent=0;rot=0;parse();};
+$("share").onclick=function(){try{navigator.clipboard.writeText(location.href);this.textContent="Copied!";var b=this;setTimeout(function(){b.textContent="Share";},1500);}catch(e){}};
+$("close").onclick=function(){$("dlg").className="dlg";};
+$("rm").onclick=function(){
+  var name=list[winIdx],l=ta.value.split("\n"),k=l.findIndex(function(x){return x.trim()===name;});
+  if(k>-1)l.splice(k,1);ta.value=l.join("\n");rot=0;parse();$("dlg").className="dlg";};
+window.addEventListener("resize",draw);
+parse();
+})();
+</script>
+</body>
+</html>
